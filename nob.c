@@ -9,14 +9,16 @@ Procs procs = {0};
 typedef enum {
     BF_FORCE,
     BF_ASAN,
+    BF_STATIC,
     BF_HELP,
     COUNT_BUILD_FLAGS
 } Build_Flag_Index;
-static_assert(COUNT_BUILD_FLAGS == 3, "Amount of build flags has changed");
+static_assert(COUNT_BUILD_FLAGS == 4, "Amount of build flags has changed");
 static Flag build_flags[COUNT_BUILD_FLAGS] = {
-    [BF_FORCE] = {.name = "-f",     .description = "Force full rebuild"},
-    [BF_ASAN]  = {.name = "-asan",  .description = "Enable address sanitizer"},
-    [BF_HELP]  = {.name = "-h",     .description = "Print build flags"},
+    [BF_FORCE]  = {.name = "-f",     .description = "Force full rebuild"},
+    [BF_ASAN]   = {.name = "-asan",  .description = "Enable address sanitizer"},
+    [BF_STATIC] = {.name = "-s",     .description = "Enable static linking"},
+    [BF_HELP]   = {.name = "-h",     .description = "Print build flags"},
 };
 
 // Folder must end with forward slash /
@@ -219,8 +221,7 @@ bool build_tore(Cmd *cmd)
     char *git_hash = get_git_hash(cmd);
     builder_compiler(cmd);
     builder_common_flags(cmd);
-    // TODO: add ability to disable static linking from command flags. (stupid macos not supported static linking with std).
-    // if (!build_flags[BF_ASAN].value) cmd_append(cmd, "-static");
+    if (build_flags[BF_STATIC].value) cmd_append(cmd, "-static");
     if (git_hash) {
         cmd_append(cmd, temp_sprintf("-DGIT_HASH=\"%s\"", git_hash));
         free(git_hash);
