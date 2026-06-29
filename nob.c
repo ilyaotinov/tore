@@ -219,7 +219,8 @@ bool build_tore(Cmd *cmd)
     char *git_hash = get_git_hash(cmd);
     builder_compiler(cmd);
     builder_common_flags(cmd);
-    if (!build_flags[BF_ASAN].value) cmd_append(cmd, "-static");
+    // TODO: add ability to disable static linking from command flags. (stupid macos not supported static linking with std).
+    // if (!build_flags[BF_ASAN].value) cmd_append(cmd, "-static");
     if (git_hash) {
         cmd_append(cmd, temp_sprintf("-DGIT_HASH=\"%s\"", git_hash));
         free(git_hash);
